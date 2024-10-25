@@ -8,8 +8,11 @@
 # Autor: John Sanabria - john.sanabria@correounivalle.edu.co
 # Fecha: 2024-08-22
 #
-INPUT_PNG="image.png"
+IMAGE_DIR="./imagenes"
 TEMP_FILE="image.bin"
-python3 fromPNG2Bin.py ${INPUT_PNG}
-./main ${TEMP_FILE}
-python3 fromBin2PNG.py ${TEMP_FILE}.new
+
+for INPUT_PNG in ${IMAGE_DIR}/*.jpg; do
+  python3 fromPNG2Bin.py ${INPUT_PNG}
+  ./main ${TEMP_FILE}
+  python3 fromBin2PNG.py ${TEMP_FILE}.new
+done

@@ -4,7 +4,7 @@ compile:
 	gcc -o main main.c
 
 exe:
-	./all.sh
+	time ./all.sh
 
 clean:
 	rm -f main *.bin*

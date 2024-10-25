@@ -95,6 +95,8 @@ void aplicarFiltro(int *imagen, int *imagenProcesada, int width, int height) {
                 for (int kx = -1; kx <= 1; kx++) {
                     sumX += imagen[(y + ky) * width + (x + kx)] * Gx[ky + 1][kx + 1];
                     sumY += imagen[(y + ky) * width + (x + kx)] * Gy[ky + 1][kx + 1];
+                    //sumX += imagen[(y + ky), x + kx] * Gx[ky + 1, kx + 1]
+                    //sumY += imagen[(y + ky), x + kx] * Gy[ky + 1, kx + 1]
                 }
             }
 
