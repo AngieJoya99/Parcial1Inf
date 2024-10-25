@@ -13,7 +13,8 @@ FILENAME = os.path.splitext(INPUT_FILE)[0]
 OUTPUT_FILE = f"{FILENAME}.PNG"
 
 # Leer el archivo binario y convertirlo a un array de NumPy
-width, height = 1024, 1024  # Asegúrate de que estas dimensiones coincidan con las usadas en el programa C
+width = int(sys.argv[2])
+height = int(sys.argv[3])
 array_imagen = np.fromfile(INPUT_FILE, dtype='int32').reshape((height, width))
 
 # Convertir el array a una imagen en escala de grises

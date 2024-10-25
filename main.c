@@ -1,6 +1,8 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 
 // Funciones placeholder para la carga y guardado de imágenes
 void cargarImagen(int *imagen, int width, int height);
@@ -15,11 +17,12 @@ int calcularSumaPixeles(int *imagen, int width, int height);
 char *filename;
 
 int main(int argc, char* argv[]) {
-    int width = 1024, height = 1024;
+    int width = atoi(argv[2]);
+    int height = atoi(argv[3]); 
     int *imagen = (int *)malloc(width * height * sizeof(int));
     int *imagenProcesada = (int *)malloc(width * height * sizeof(int));
-
-    if (argc != 2) {
+    
+    if (argc != 4) {
       fprintf(stderr, "Dar un nombre de archivo de entrada");
       exit(1);
     }
@@ -28,13 +31,11 @@ int main(int argc, char* argv[]) {
     // Cargar la imagen (no paralelizable)
     cargarImagen(imagen, width, height);
 
-    // Aplicar filtro (paralelizable)
+    
     aplicarFiltro(imagen, imagenProcesada, width, height);
-
-    // Calcular suma de píxeles (parte paralelizable)
     int sumaPixeles = calcularSumaPixeles(imagenProcesada, width, height);
-
     printf("Suma de píxeles: %d\n", sumaPixeles);
+    
 
     // Guardar la imagen (no paralelizable)
     guardarImagen(imagenProcesada, width, height);
@@ -84,7 +85,11 @@ void guardarImagen(int *imagen, int width, int height) {
 void aplicarFiltro(int *imagen, int *imagenProcesada, int width, int height) {
     int Gx[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
     int Gy[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
-
+    
+    int cantHilos = 2*omp_get_num_procs();
+     
+    #pragma omp parallel for num_threads(cantHilos)
+    
     for (int y = 1; y < height - 1; y++) {
         for (int x = 1; x < width - 1; x++) {
             int sumX = 0;
@@ -105,14 +110,18 @@ void aplicarFiltro(int *imagen, int *imagenProcesada, int width, int height) {
             imagenProcesada[y * width + x] = (magnitude > 255) ? 255 : magnitude;  // Normalizar a 8 bits
         }
     }
+    
 }
 
 
 int calcularSumaPixeles(int *imagen, int width, int height) {
     int suma = 0;
+    int cantHilos = 2*omp_get_num_procs();
+    #pragma omp parallel for reduction(+:suma) num_threads(cantHilos)
+    
     for (int i = 0; i < width * height; i++) {
         suma += imagen[i];
     }
+    
     return suma;
 }
-
